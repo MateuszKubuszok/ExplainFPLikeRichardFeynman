@@ -1,0 +1,146 @@
+= Explain FP like Richard Feynman
+
+== Hello
+
+TODO: introduce myself
+
+== Richard Feynman
+
+[width="100",cols="1,2"]
+|====================
+a| image::img/bongos.jpg[Feynman on bongos] a| [%step]
+* worked at Los Alamos on https://en.wikipedia.org/wiki/Manhattan_Project[the Manhattan Project]
+* discovered https://en.wikipedia.org/wiki/Feynman_diagram[Feynman diagrams]
+* investigated https://en.wikipedia.org/wiki/Space_Shuttle_Challenger_disaster[the Challanger disaster]
+* a curious and interesting guy
+|====================
+
+[NOTE.speaker]
+--
+The Manhattan project - creation of a nuclear bomb
+
+Feynman diagrams - shows interaction between subatomic particles
+
+_Sure, you're jocking, mr. Feynman!_ - recommend
+--
+
+
+== Some serious pics to contrast with Feynman playing a bongo
+
+[width="100%"]
+|====================
+a| image::img/nuclear.jpg[Nuclear explosion in Los Alamos] a| image::img/diagram.svg[Feynman diagram] a| image::img/challenger.jpg[Challenger disaster]
+|====================
+
+
+== Feynman diagrams
+
+TODO:
+
+[NOTE.speaker]
+--
+Story how he got burned out etc
+--
+
+[%notitle]
+=== Keep it fun
+
+TODO: feynman dancing and drawing ladies
+
+TODO: image - show that programming is fun
+
+TODO: don't - FP is principled and well defined
+
+[NOTE.speaker]
+--
+Mention about https://www.youtube.com/watch?v=Pb5oIIPO62g[John Cleese video about creativity]
+
+Mention about - https://www.maa.org/external_archive/devlin/LockhartsLament.pdf[Mathematician's lament] - FP does not have to be practical, it has to be fun and satisfying
+--
+
+
+== Reviewing student's books
+
+TODO: energy images
+
+[NOTE.speaker]
+--
+Defining sth with energy is a tautology.
+--
+
+[%notitle]
+=== Order of explanation
+
+[%step]
+* don't explain things you try to explain using (even indirectly) things you want to explain
+* abstraction is derived from specifics - not the other way round
+
+
+== Question about magnets
+
+TODO: images
+
+[NOTE.speaker]
+--
+Interviewer asked about how magnets work.
+
+Feynman described, how the answer depends on the framework of knowledge of asking side (normal person - magnetic force repels or attracts, physics student - electrons have a charge which can attract or repel depending on how they spin, more advanced explanation cannot refer to "things that the interviewer is familiar with".
+--
+
+[%notitle]
+=== Adjust the message to audience
+
+[%step]
+* not everyone has a CS background
+* not everyone has any mathematical background
+* if we want to teach someone a formal definition, we need to make sure they know the whole foundation they need before - and that takes time to adjust
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
