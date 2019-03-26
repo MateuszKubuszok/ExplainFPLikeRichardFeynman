@@ -59,14 +59,13 @@ He decided to calculate the ratio and found out it was 1 to 2 (in book it was re
 
 After that he decided to apply similar things to electrons' movement in relativity, then "Dirac Equation then quantum electrodynamics".
 
-Other anegdotes: Stanisław Ulam had uncle Michał Ulam, who was a gambler and visited Monte Carlo a lot. Ulam at some point wanted to calculate the probability of finishing solitare. Von Neumann decided to use it on ENIAC to improve the speed of reaseach in Los Alamos.
+Other anecdotes: Stanisław Ulam had uncle Michał Ulam, who was a gambler and visited Monte Carlo a lot. Ulam at some point wanted to calculate the probability of finishing solitaire. Von Neumann decided to use it on ENIAC to improve the speed of research in Los Alamos.
 
 Image sources:
 
 * https://aapt.scitation.org/doi/10.1119/1.2402156 - plate
 --
 
-[%notitle]
 === Keep it fun
 
 [width="100%"]
@@ -150,7 +149,21 @@ Feynman described, how the answer depends on the framework of knowledge of askin
 
 == Example
 
-Something classic - monad tutorial!
+[.fragment]
+Something classic - a monad tutorial!
+
+=== Typical infamous approaches
+
+[%step]
+* _monoid in the category of endofunctors_
+* _monad is like taco/burrito/etc_
+* _so we have this nice little type class_
+
+[NOTE.speaker]
+--
+* too much math, assumes audience knows category theory already, no intuition
+* this metaphor works only for the author
+--
 
 === Let's tell a story!
 
@@ -227,20 +240,21 @@ final case class Map[A, B](ioa: IO[A], f: A => B)
 
 === Are we done?
 
-[%step]
-
+[.fragment]
 [source,scala]
 ----
 val writeTest: IO[Unit] = IO.writeLine("test")
 // yay!
 ----
 
+[.fragment]
 [source,scala]
 ----
 val getData: IO[String] = IO.readLine.map("we got: " + _)
 // yay!
 ----
 
+[fragment]
 [source,scala]
 ----
 val echo: IO[IO[Unit]] = IO.readLine.map(IO.writeLine)
@@ -249,16 +263,16 @@ val echo: IO[IO[Unit]] = IO.readLine.map(IO.writeLine)
 
 === We need some flatten
 
-[%step]
+[.fragment]
 [source,scala]
 ----
 val echo: IO[Unit] = IO.readLine.map(IO.writeLine).flatten
 ----
 
-[%step]
+[.fragment]
 Or do we?
 
-[%step]
+[.fragment]
 [source,scala]
 ----
 val echo: IO[Unit] = IO.readLine.flatMap(IO.writeLine)
@@ -326,8 +340,8 @@ sealed trait IO[A] {
 
 == Questions?
 
-[%step]
-image::img/tumbleweed.gif[Audence at this point]
+[.fragment]
+image::img/tumbleweed.gif[Audience at this point]
 
 
 == Thank you!
