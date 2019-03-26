@@ -9,7 +9,7 @@
 .conum[data-value]:after{content:attr(data-value)}
 pre .conum[data-value]{position:relative;top:-.125em}
 b.conum *{color:inherit!important}
-.conum:not([data-value]):empty{display:none}</style><script type="text/x-mathjax-config">MathJax.Hub.Config({
+.conum:not([data-value]):empty{display:none}</style><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css"><script type="text/x-mathjax-config">MathJax.Hub.Config({
 tex2jax: {
   inlineMath: [["\\(", "\\)"]],
   displayMath: [["\\[", "\\]"]],
@@ -51,7 +51,79 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );</script><!--[if 
 <div class="paragraph"><p>Also new math. How we force high-level definitions on people without giving them any solid foundations.</p></div>
 <div class="paragraph"><p>Mention <a href="https://www.youtube.com/watch?v=UIKGV2cTgqA">Tom Lehrer and his song</a>.</p></div></aside></section><section id="_order_of_explanation"><div class="ulist"><ul><li class="fragment"><p>don&#8217;t explain things you try to explain using (even indirectly) things you want to explain</p></li><li class="fragment"><p>abstraction is derived from specifics - not the other way round</p></li></ul></div></section></section>
 <section><section id="_question_about_magnets"><h2>Question about magnets</h2><div class="imageblock" style=""><img src="img/magnets.jpg" alt="Fucking magnets" width="how do they work"></div><aside class="notes"><div class="paragraph"><p><a href="https://www.youtube.com/watch?v=4zZbX_9ru9U">Interviewer asked about how magnets work</a>.</p></div>
-<div class="paragraph"><p>Feynman described, how the answer depends on the framework of knowledge of asking side (normal person - magnetic force repels or attracts, physics student - electrons have a charge which can attract or repel depending on how they spin, more advanced explanation cannot refer to "things that the interviewer is familiar with".</p></div></aside></section><section id="_adjust_the_message_to_audience"><div class="ulist"><ul><li class="fragment"><p>not everyone has a CS background</p></li><li class="fragment"><p>not everyone has any mathematical background</p></li><li class="fragment"><p>if we want to teach someone a formal definition, we need to make sure they know the whole foundation they need before - and that takes time to adjust</p></li></ul></div></section></section></div></div><script src="./lib/js/head.min.js"></script><script src="./js/reveal.js"></script><script>Array.prototype.slice.call(document.querySelectorAll('.slides section')).forEach(function(slide) {
+<div class="paragraph"><p>Feynman described, how the answer depends on the framework of knowledge of asking side (normal person - magnetic force repels or attracts, physics student - electrons have a charge which can attract or repel depending on how they spin, more advanced explanation cannot refer to "things that the interviewer is familiar with".</p></div></aside></section><section id="_adjust_the_message_to_audience"><div class="ulist"><ul><li class="fragment"><p>not everyone has a CS background</p></li><li class="fragment"><p>not everyone has any mathematical background</p></li><li class="fragment"><p>if we want to teach someone a formal definition, we need to make sure they know the whole foundation they need before - and that takes time to adjust</p></li></ul></div></section></section>
+<section><section id="_example"><h2>Example</h2><div class="paragraph"><p>Something classic - monad tutorial!</p></div></section><section id="_lets_tell_a_story"><h2>Let&#8217;s tell a story!</h2></section><section id="_i_have_side_effects"><h2>I have side effects</h2><pre class="highlight listingblock"><code data-noescape class="scala language-scala">def readLine: String = ???
+def writeLine(line: String): Unit = ???
+def curl(url: URL): String = ???</code></pre></section><section id="_lets_return_pure_value_instead"><h2>Let&#8217;s return pure value instead!</h2><pre class="highlight listingblock"><code data-noescape class="scala language-scala">sealed trait SideEffect[A]
+
+final case class ReadLine()
+  extends SideEffect[String]
+
+final case class WriteLine(line: String)
+  extends SideEffect[Unit]
+
+final case class Curl(url: URL)
+  extends SideEffect[String]</code></pre></section><section id="_hmm_we_need_to_combine_them_somehow"><h2>Hmm, we need to combine them somehow&#8230;&#8203;</h2><pre class="highlight listingblock"><code data-noescape class="scala language-scala">sealed trait IO[A] {
+
+  def map[B](f: A =&gt; B): IO[B] = ???
+}
+object IO {
+
+  def readLine: IO[String] = ???
+  def writeLine(line: String): IO[Unit] = ???
+  def curl(url: URL): IO[String] = ???
+}</code></pre></section><section id="_at_first_lets_create_suspended_side_effect_computation"><h2>At first, let&#8217;s create suspended side-effect computation!</h2><pre class="highlight listingblock"><code data-noescape class="scala language-scala">final case class Suspend[A](se: SideEffect[A])
+  extends IO[A]
+
+object IO {
+  def readLine: IO[String] =
+    Suspend(ReadLine())
+  def writeLine(line: String): IO[Unit] =
+    Suspend(WriteLine(line))
+  def curl(url: URL): IO[String] =
+    Suspend(Curl(url))
+}</code></pre></section><section id="_now_lets_add_ability_to_map"><h2>Now, let&#8217;s add ability to map!</h2><pre class="highlight listingblock"><code data-noescape class="scala language-scala">sealed trait IO[A] {
+
+  def map[B](f: A =&gt; B): IO[B] = Map(this, f)
+}
+
+final case class Map[A, B](ioa: IO[A], f: A =&gt; B)
+  extends IO[B]</code></pre></section><section id="_are_we_done"><h2>Are we done?</h2><pre class="highlight listingblock"><code data-noescape class="scala language-scala">val writeTest: IO[Unit] = IO.writeLine("test")
+// yay!</code></pre>
+<pre class="highlight listingblock"><code data-noescape class="scala language-scala">val getData: IO[String] = IO.readLine.map("we got: " + _)
+// yay!</code></pre>
+<pre class="highlight listingblock"><code data-noescape class="scala language-scala">val echo: IO[IO[Unit]] = IO.readLine.map(IO.writeLine)
+// shit!</code></pre></section><section id="_we_need_some_flatten"><h2>We need some flatten</h2><pre class="highlight listingblock"><code data-noescape class="scala language-scala">val echo: IO[Unit] = IO.readLine.map(IO.writeLine).flatten</code></pre>
+<div class="paragraph"><p>Or do we?</p></div>
+<pre class="highlight listingblock"><code data-noescape class="scala language-scala">val echo: IO[Unit] = IO.readLine.flatMap(IO.writeLine)</code></pre></section><section id="_lets_replace_map_with_flatmap"><h2>Let&#8217;s replace map with flatMap&#8230;&#8203;</h2><pre class="highlight listingblock"><code data-noescape class="scala language-scala">sealed trait IO[A] {
+
+  def flatMap[B](f: A =&gt; IO[B]): IO[B] = FlatMap(this, f)
+}
+
+final case class FlatMap[A, B](ioa: IO[A], f: A =&gt; IO[B])
+  extends IO[B]</code></pre></section><section id="_so_are_we_done_now"><h2>So, are we done, NOW?</h2><pre class="highlight listingblock"><code data-noescape class="scala language-scala">IO.readLine
+  .flatMap { line =&gt; IO.writeLine(line) }
+  .flatMap { _ =&gt; IO.writeLine("said Echo") }
+  .flatMap { _ =&gt; /* I want to return 2 here */ ??? }</code></pre></section><section id="_i_guess_we_need_the_third_variant_of_io"><h2>I guess we need the third variant of IO</h2><pre class="highlight listingblock"><code data-noescape class="scala language-scala">final case class Pure[A](a: A)
+  extends IO[A]
+
+object IO {
+
+  def pure(a: A): IO[A] = Pure(a)
+
+  // ...
+}</code></pre></section><section id="_uff"><h2>Uff!</h2><pre class="highlight listingblock"><code data-noescape class="scala language-scala">val sth: IO[Int] = IO.readLine
+  .flatMap { line =&gt; IO.writeLine(line) }
+  .flatMap { _ =&gt; IO.writeLine("said Echo") }
+  .flatMap { _ =&gt; IO.pure(2) }</code></pre></section><section id="_bonus"><h2>Bonus!</h2><pre class="highlight listingblock"><code data-noescape class="scala language-scala">sealed trait IO[A] {
+
+  def flatMap[B](f: A =&gt; IO[B]): IO[B] = FlatMap(this, f)
+  def map[B](f: A =&gt; B): IO[B] = flatMap { a =&gt; IO.pure(f(b)) }
+}</code></pre></section></section>
+<section id="_questions"><h2>Questions?</h2><div class="imageblock" style=""><img src="img/tumbleweed.gif" alt="Audence at this point"></div></section>
+<section id="_thank_you"><h2>Thank you!</h2><div class="paragraph"><p><span class="icon"><i class="fa fa-home"></i></span> kubuszok.com</p></div>
+<div class="paragraph"><p><span class="icon"><i class="fa fa-github"></i></span> MateuszKubuszok</p></div>
+<div class="paragraph"><p><span class="icon"><i class="fa fa-twitter"></i></span> MateuszKubuszok</p></div></section></div></div><script src="./lib/js/head.min.js"></script><script src="./js/reveal.js"></script><script>Array.prototype.slice.call(document.querySelectorAll('.slides section')).forEach(function(slide) {
   if (slide.getAttribute('data-background-color')) return;
   // user needs to explicitly say he wants CSS color to override otherwise we might break custom css or theme (#226)
   if (!(slide.classList.contains('canvas') || slide.classList.contains('background'))) return;

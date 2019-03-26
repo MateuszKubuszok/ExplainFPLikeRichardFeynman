@@ -1,4 +1,5 @@
 = Explain FP like Richard Feynman
+:icons: font
 
 Mateusz Kubuszok
 
@@ -145,3 +146,197 @@ Feynman described, how the answer depends on the framework of knowledge of askin
 * not everyone has a CS background
 * not everyone has any mathematical background
 * if we want to teach someone a formal definition, we need to make sure they know the whole foundation they need before - and that takes time to adjust
+
+
+== Example
+
+Something classic - monad tutorial!
+
+=== Let's tell a story!
+
+=== I have side effects
+
+[source,scala]
+----
+def readLine: String = ???
+def writeLine(line: String): Unit = ???
+def curl(url: URL): String = ???
+----
+
+=== Let's return pure value instead!
+
+[source,scala]
+----
+sealed trait SideEffect[A]
+
+final case class ReadLine()
+  extends SideEffect[String]
+  
+final case class WriteLine(line: String)
+  extends SideEffect[Unit]
+  
+final case class Curl(url: URL)
+  extends SideEffect[String]
+----
+
+=== Hmm, we need to combine them somehow...
+
+[source,scala]
+----
+sealed trait IO[A] {
+
+  def map[B](f: A => B): IO[B] = ???
+}
+object IO {
+
+  def readLine: IO[String] = ???
+  def writeLine(line: String): IO[Unit] = ???
+  def curl(url: URL): IO[String] = ???
+}
+----
+
+=== At first, let's create suspended side-effect computation!
+
+[source,scala]
+----
+final case class Suspend[A](se: SideEffect[A])
+  extends IO[A]
+  
+object IO {
+  def readLine: IO[String] =
+    Suspend(ReadLine())
+  def writeLine(line: String): IO[Unit] =
+    Suspend(WriteLine(line))
+  def curl(url: URL): IO[String] =
+    Suspend(Curl(url))
+}
+----
+
+=== Now, let's add ability to map!
+
+[source,scala]
+----
+sealed trait IO[A] {
+
+  def map[B](f: A => B): IO[B] = Map(this, f)
+}
+
+final case class Map[A, B](ioa: IO[A], f: A => B)
+  extends IO[B]
+----
+
+=== Are we done?
+
+[%step]
+
+[source,scala]
+----
+val writeTest: IO[Unit] = IO.writeLine("test")
+// yay!
+----
+
+[source,scala]
+----
+val getData: IO[String] = IO.readLine.map("we got: " + _)
+// yay!
+----
+
+[source,scala]
+----
+val echo: IO[IO[Unit]] = IO.readLine.map(IO.writeLine)
+// shit!
+----
+
+=== We need some flatten
+
+[%step]
+[source,scala]
+----
+val echo: IO[Unit] = IO.readLine.map(IO.writeLine).flatten
+----
+
+[%step]
+Or do we?
+
+[%step]
+[source,scala]
+----
+val echo: IO[Unit] = IO.readLine.flatMap(IO.writeLine)
+----
+
+=== Let's replace map with flatMap...
+
+[source,scala]
+----
+sealed trait IO[A] {
+
+  def flatMap[B](f: A => IO[B]): IO[B] = FlatMap(this, f)
+}
+
+final case class FlatMap[A, B](ioa: IO[A], f: A => IO[B])
+  extends IO[B]
+----
+
+=== So, are we done, NOW?
+
+[source,scala]
+----
+IO.readLine
+  .flatMap { line => IO.writeLine(line) }
+  .flatMap { _ => IO.writeLine("said Echo") }
+  .flatMap { _ => /* I want to return 2 here */ ??? }
+----
+
+=== I guess we need the third variant of IO
+
+[source,scala]
+----
+final case class Pure[A](a: A)
+  extends IO[A]
+  
+object IO {
+
+  def pure(a: A): IO[A] = Pure(a)
+
+  // ...
+}
+----
+
+=== Uff!
+
+[source,scala]
+----
+val sth: IO[Int] = IO.readLine
+  .flatMap { line => IO.writeLine(line) }
+  .flatMap { _ => IO.writeLine("said Echo") }
+  .flatMap { _ => IO.pure(2) }
+----
+
+=== Bonus!
+
+[source,scala]
+----
+sealed trait IO[A] {
+
+  def flatMap[B](f: A => IO[B]): IO[B] = FlatMap(this, f)
+  def map[B](f: A => B): IO[B] = flatMap { a => IO.pure(f(b)) }
+}
+----
+
+
+== Questions?
+
+[%step]
+image::img/tumbleweed.gif[Audence at this point]
+
+
+== Thank you!
+
+icon:home[] kubuszok.com
+
+icon:github[] MateuszKubuszok
+
+icon:twitter[] MateuszKubuszok
+
+
+
